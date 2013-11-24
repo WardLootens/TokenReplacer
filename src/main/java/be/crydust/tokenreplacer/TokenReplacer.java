@@ -2,6 +2,7 @@ package be.crydust.tokenreplacer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,26 +19,21 @@ public class TokenReplacer {
     private Pattern pattern;
 
     public TokenReplacer(String begintoken, String endtoken, Map<String, String> replacetokens) {
-        if (begintoken == null || begintoken.isEmpty()) {
-            throw new IllegalArgumentException("begintoken");
-        }
-        if (endtoken == null || endtoken.isEmpty()) {
-            throw new IllegalArgumentException("endtoken");
-        }
-        if (replacetokens == null || replacetokens.isEmpty()) {
+        Strings.requireNonEmpty(begintoken);
+        Strings.requireNonEmpty(endtoken);
+        Objects.requireNonNull(replacetokens);
+        if (replacetokens.isEmpty()) {
             throw new IllegalArgumentException("replacetokens");
         }
         for (String key : replacetokens.keySet()) {
-            if (key == null || key.isEmpty()) {
-                throw new IllegalArgumentException("replacetokens with empty key");
-            }
+            Strings.requireNonEmpty(key);
         }
         this.begintoken = begintoken;
         this.endtoken = endtoken;
         this.replacetokens = new HashMap<>(replacetokens);
     }
 
-    public Pattern getPattern() {
+    private Pattern getPattern() {
         if (pattern == null) {
             StringBuilder sb = new StringBuilder();
             sb.append(Pattern.quote(begintoken));
