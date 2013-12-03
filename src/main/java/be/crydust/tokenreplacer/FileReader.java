@@ -1,6 +1,9 @@
 package be.crydust.tokenreplacer;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +18,8 @@ import java.util.concurrent.Callable;
  */
 public class FileReader implements Callable<String> {
 
+    // 1 megabyte
+    private static long MAX_SIZE = 1 * 1024 * 1024;
     private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
     
     private final Path path;
@@ -33,6 +38,9 @@ public class FileReader implements Callable<String> {
 
     @Override
     public String call() throws Exception {
+        if (Files.size(path) > MAX_SIZE) {
+            throw new RuntimeException("file is too large to read");
+        }
         byte[] encoded = Files.readAllBytes(path);
         return encoding.decode(ByteBuffer.wrap(encoded)).toString();
     }
