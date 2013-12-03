@@ -7,6 +7,7 @@ import java.util.Objects;
  * @author kristof
  */
 public class Strings {
+
     public static String requireNonEmpty(String string) {
         Objects.requireNonNull(string);
         if (string.isEmpty()) {

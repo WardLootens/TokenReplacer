@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IntegrationTest {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(IntegrationTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTest.class);
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -64,8 +65,13 @@ public class IntegrationTest {
         TokenReplacer replacer = new TokenReplacer(begintoken, endtoken, replacetokens);
         List<Path> templates = new FilesFinder(folder.getRoot().toPath(), "*.template").call();
         for(Path template : templates){
+            Path file = FileExtensionUtil.replaceExtension(template, "");
+            if (file.toFile().exists()) {
+                String fileContents = new FileReader(file).call();
+                Path backupFile = FileExtensionUtil.replaceExtension(template, ".bak");
+                new FileWriter(fileContents, backupFile).run();
+            }
             String templateContents = new FileReader(template).call();
-            Path file = template.getParent().resolve(template.getFileName().toString().replaceFirst("\\.template$", ""));
             new FileWriter(replacer.replace(templateContents), file).run();
         }
         String output = new FileReader(folder.getRoot().toPath().resolve("a")).call();
