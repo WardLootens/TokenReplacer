@@ -28,6 +28,7 @@ public class App implements Runnable {
         options.addOption("b", "begintoken", true, "begintoken (default @)");
         options.addOption("e", "endtoken", true, "endtoken (default @)");
         options.addOption("f", "folder", true, "folder (default current directory)");
+        options.addOption("q", "quiet", false, "quiet mode, do not ask if ok to replace");
         OptionBuilder.withArgName("key=value");
         OptionBuilder.hasArgs(2);
         OptionBuilder.withValueSeparator('=');
@@ -57,7 +58,8 @@ public class App implements Runnable {
                         commandLine.getOptionValue('b', "@"),
                         commandLine.getOptionValue('e', "@"),
                         replacetokens,
-                        Paths.get(commandLine.getOptionValue('f', System.getProperty("user.dir")))
+                        Paths.get(commandLine.getOptionValue('f', System.getProperty("user.dir"))),
+                        commandLine.hasOption("q")
                 );
                 LOGGER.debug("{}", config);
 
@@ -77,7 +79,8 @@ public class App implements Runnable {
 
     public static void main(String[] args) {
         Config config = readConfig(args);
-        if (readContinue()) {
+        
+        if (config.isQuiet() || readContinue()) {
             new App(config).run();
             System.out.println("Done.");
         } else {
@@ -115,12 +118,14 @@ public class App implements Runnable {
         private final String endtoken;
         private final Map<String, String> replacetokens;
         private final Path folder;
+        private final boolean quiet;
 
-        public Config(String begintoken, String endtoken, Map<String, String> replacetokens, Path folder) {
+        public Config(String begintoken, String endtoken, Map<String, String> replacetokens, Path folder, boolean quiet) {
             this.begintoken = begintoken;
             this.endtoken = endtoken;
             this.replacetokens = replacetokens;
             this.folder = folder;
+            this.quiet = quiet;
         }
 
         public String getBegintoken() {
@@ -139,9 +144,14 @@ public class App implements Runnable {
             return folder;
         }
 
+        public boolean isQuiet() {
+            return quiet;
+        }
+        
+
         @Override
         public String toString() {
-            return "Config{" + "begintoken=" + begintoken + ", endtoken=" + endtoken + ", replacetokens=" + replacetokens + ", folder=" + folder + '}';
+            return "Config{" + "begintoken=" + begintoken + ", endtoken=" + endtoken + ", replacetokens=" + replacetokens + ", folder=" + folder + ", quiet=" + quiet + '}';
         }
 
     }
