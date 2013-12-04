@@ -79,7 +79,7 @@ public class App implements Runnable {
 
     public static void main(String[] args) {
         Config config = readConfig(args);
-        
+
         if (config.isQuiet() || readContinue()) {
             new App(config).run();
             System.out.println("Done.");
@@ -147,11 +147,16 @@ public class App implements Runnable {
         public boolean isQuiet() {
             return quiet;
         }
-        
 
         @Override
         public String toString() {
-            return "Config{" + "begintoken=" + begintoken + ", endtoken=" + endtoken + ", replacetokens=" + replacetokens + ", folder=" + folder + ", quiet=" + quiet + '}';
+            return "Config{\n"
+                    + "  begintoken=" + begintoken + ",\n"
+                    + "  endtoken=" + endtoken + ",\n"
+                    + "  replacetokens=" + replacetokens + ",\n"
+                    + "  folder=" + folder + ",\n"
+                    + "  quiet=" + quiet + "\n"
+                    + "}";
         }
 
     }
