@@ -22,7 +22,7 @@ public class App implements Runnable {
 
     private final Config config;
 
-    public static Options getOptions() {
+    private static Options getOptions() {
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
         options.addOption("b", "begintoken", true, "begintoken (default @)");
@@ -37,13 +37,14 @@ public class App implements Runnable {
         return options;
     }
 
-    public static void main(String[] args) {
+    private static Config readConfig(String[] args) {
+        Config config = null;
         try {
             Options options = getOptions();
             CommandLine commandLine = new BasicParser().parse(options, args);
             if (commandLine.hasOption('h')) {
                 HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("java -jar TockenReplacer.jar", options);
+                formatter.printHelp("java -jar TokenReplacer.jar", options);
             } else {
                 Map<String, String> replacetokens = new HashMap<>();
                 if (commandLine.hasOption("D")) {
@@ -52,7 +53,7 @@ public class App implements Runnable {
                         replacetokens.put(key, properties.getProperty(key));
                     }
                 }
-                Config config = new Config(
+                config = new Config(
                         commandLine.getOptionValue('b', "@"),
                         commandLine.getOptionValue('e', "@"),
                         replacetokens,
@@ -60,18 +61,27 @@ public class App implements Runnable {
                 );
                 LOGGER.debug("{}", config);
 
-                System.out.println("Continue [y/N]?");
-                Scanner scan = new Scanner(System.in);
-                String answer = scan.next();
-                if (answer.trim().equalsIgnoreCase("y")) {
-                    new App(config).run();
-                    System.out.println("Done.");
-                } else {
-                    System.out.println("Canceled.");
-                }
             }
         } catch (ParseException ex) {
             LOGGER.error("Parsing failed.", ex);
+        }
+        return config;
+    }
+
+    private static boolean readContinue() {
+        System.out.println("Continue [y/N]?");
+        try (Scanner scanner = new Scanner(System.in)) {
+            return scanner.next().trim().equalsIgnoreCase("y");
+        }
+    }
+
+    public static void main(String[] args) {
+        Config config = readConfig(args);
+        if (readContinue()) {
+            new App(config).run();
+            System.out.println("Done.");
+        } else {
+            System.out.println("Canceled.");
         }
     }
 
