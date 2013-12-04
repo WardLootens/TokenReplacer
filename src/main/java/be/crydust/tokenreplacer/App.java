@@ -79,12 +79,13 @@ public class App implements Runnable {
 
     public static void main(String[] args) {
         Config config = readConfig(args);
-
-        if (config.isQuiet() || readContinue()) {
-            new App(config).run();
-            System.out.println("Done.");
-        } else {
-            System.out.println("Canceled.");
+        if (config != null) {
+            if (config.isQuiet() || readContinue()) {
+                new App(config).run();
+                System.out.println("Done.");
+            } else {
+                System.out.println("Canceled.");
+            }
         }
     }
 
