@@ -8,7 +8,21 @@
     <packaging>jar</packaging>
 
     <name>tokenreplacer</name>
-    <url>http://maven.apache.org</url>
+    <url>https://github.com/Crydust/TokenReplacer</url>
+    
+    <developers>
+        <developer>
+            <id>Crydust</id>
+            <name>Kristof Neirynck</name>
+            <url>http://www.crydust.be</url>
+        </developer>
+    </developers>
+    
+    <scm>
+        <url>https://github.com/Crydust/TokenReplacer</url>
+        <connection>scm:git:git://github.com/Crydust/TokenReplacer.git</connection>
+        <developerConnection>scm:git:git@github.com:Crydust/TokenReplacer.git</developerConnection>
+    </scm>
     
     <build>
         <plugins>
@@ -75,6 +89,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.2</version>
             </plugin>
         </plugins>
     </build>
