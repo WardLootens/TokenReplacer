@@ -1,5 +1,6 @@
 package be.crydust.tokenreplacer;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
@@ -7,6 +8,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class TokenReplacerTest {
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testReplacetokensWithEmptyReplacetokens() {
+        String begintoken = "<";
+        String endtoken = ">";
+        Map<String, String> replacetokens = Collections.<String, String>emptyMap();
+        TokenReplacer cut = new TokenReplacer(begintoken, endtoken, replacetokens);
+    }
 
     @Test
     public void testReplacetokensWithNoMatches() {

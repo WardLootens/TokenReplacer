@@ -1,9 +1,7 @@
 package be.crydust.tokenreplacer;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
@@ -16,11 +14,9 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class App implements Runnable {
+public class App {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
-
-    private final Config config;
 
     private static Options getOptions() {
         Options options = new Options();
@@ -61,8 +57,6 @@ public class App implements Runnable {
                         Paths.get(commandLine.getOptionValue('f', System.getProperty("user.dir"))),
                         commandLine.hasOption("q")
                 );
-                LOGGER.debug("{}", config);
-
             }
         } catch (ParseException ex) {
             LOGGER.error("Parsing failed.", ex);
@@ -80,86 +74,14 @@ public class App implements Runnable {
     public static void main(String[] args) {
         Config config = readConfig(args);
         if (config != null) {
+            System.out.print(config.toString());
             if (config.isQuiet() || readContinue()) {
-                new App(config).run();
+                new Action(config).run();
                 System.out.println("Done.");
             } else {
                 System.out.println("Canceled.");
             }
         }
-    }
-
-    private App(Config config) {
-        this.config = config;
-    }
-
-    @Override
-    public void run() {
-        try {
-            TokenReplacer replacer = new TokenReplacer(config.getBegintoken(), config.getEndtoken(), config.getReplacetokens());
-            List<Path> templates = new FilesFinder(config.getFolder(), "*.template").call();
-            for (Path template : templates) {
-                Path file = FileExtensionUtil.replaceExtension(template, "");
-                if (file.toFile().exists()) {
-                    String fileContents = new FileReader(file).call();
-                    Path backupFile = FileExtensionUtil.replaceExtension(template, ".bak");
-                    new FileWriter(fileContents, backupFile).run();
-                }
-                String templateContents = new FileReader(template).call();
-                new FileWriter(replacer.replace(templateContents), file).run();
-            }
-        } catch (Exception ex) {
-            LOGGER.error(null, ex);
-        }
-    }
-
-    private static class Config {
-
-        private final String begintoken;
-        private final String endtoken;
-        private final Map<String, String> replacetokens;
-        private final Path folder;
-        private final boolean quiet;
-
-        public Config(String begintoken, String endtoken, Map<String, String> replacetokens, Path folder, boolean quiet) {
-            this.begintoken = begintoken;
-            this.endtoken = endtoken;
-            this.replacetokens = replacetokens;
-            this.folder = folder;
-            this.quiet = quiet;
-        }
-
-        public String getBegintoken() {
-            return begintoken;
-        }
-
-        public String getEndtoken() {
-            return endtoken;
-        }
-
-        public Map<String, String> getReplacetokens() {
-            return replacetokens;
-        }
-
-        public Path getFolder() {
-            return folder;
-        }
-
-        public boolean isQuiet() {
-            return quiet;
-        }
-
-        @Override
-        public String toString() {
-            return "Config{\n"
-                    + "  begintoken=" + begintoken + ",\n"
-                    + "  endtoken=" + endtoken + ",\n"
-                    + "  replacetokens=" + replacetokens + ",\n"
-                    + "  folder=" + folder + ",\n"
-                    + "  quiet=" + quiet + "\n"
-                    + "}";
-        }
-
     }
 
 }

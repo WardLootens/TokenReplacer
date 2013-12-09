@@ -1,6 +1,7 @@
 package be.crydust.tokenreplacer;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,7 @@ public class IntegrationTest {
         List<Path> templates = new FilesFinder(folder.getRoot().toPath(), "*.template").call();
         for(Path template : templates){
             Path file = FileExtensionUtil.replaceExtension(template, "");
-            if (file.toFile().exists()) {
+            if (Files.exists(file)) {
                 String fileContents = new FileReader(file).call();
                 Path backupFile = FileExtensionUtil.replaceExtension(template, ".bak");
                 new FileWriter(fileContents, backupFile).run();
