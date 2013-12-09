@@ -1,5 +1,6 @@
 package be.crydust.tokenreplacer;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,12 +37,11 @@ public class App {
 
     private static Config readConfig(String[] args) {
         Config config = null;
+        Options options = getOptions();
         try {
-            Options options = getOptions();
             CommandLine commandLine = new BasicParser().parse(options, args);
             if (commandLine.hasOption('h')) {
-                HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("java -jar TokenReplacer.jar", options);
+                printHelp(options);
             } else {
                 Map<String, String> replacetokens = new HashMap<>();
                 if (commandLine.hasOption("D")) {
@@ -60,14 +60,22 @@ public class App {
             }
         } catch (ParseException ex) {
             LOGGER.error("Parsing failed.", ex);
+            printHelp(options);
         }
         return config;
     }
 
+    private static void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("java -jar TokenReplacer.jar", options);
+    }
+
     private static boolean readContinue() {
         System.out.println("Continue [y/N]?");
-        try (Scanner scanner = new Scanner(System.in)) {
-            return scanner.next().trim().equalsIgnoreCase("y");
+        try (Scanner scanner = new Scanner(
+                System.in,
+                StandardCharsets.US_ASCII.name())) {
+            return scanner.next().equalsIgnoreCase("y");
         }
     }
 
