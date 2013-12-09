@@ -79,6 +79,9 @@
                             <mainClass>be.crydust.tokenreplacer.App</mainClass>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>**/logback-test.xml</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -94,6 +97,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/logback-test.xml</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <!--

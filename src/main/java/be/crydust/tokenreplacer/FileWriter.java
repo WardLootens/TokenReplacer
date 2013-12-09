@@ -43,6 +43,7 @@ public class FileWriter implements Runnable {
         try (BufferedWriter writer = Files.newBufferedWriter(path, encoding)) {
             writer.append(contents);
         } catch (IOException ex) {
+            System.err.println(ex.getMessage());
             LOGGER.error("FileWriter failed");
             throw new RuntimeException(ex);
         }

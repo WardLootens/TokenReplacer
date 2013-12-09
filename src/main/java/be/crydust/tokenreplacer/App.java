@@ -30,7 +30,6 @@ public class App {
         OptionBuilder.hasArgs(2);
         OptionBuilder.withValueSeparator('=');
         OptionBuilder.withDescription("key value pairs to replace (required)");
-        OptionBuilder.isRequired(true);
         options.addOption(OptionBuilder.create("D"));
         return options;
     }
@@ -40,15 +39,13 @@ public class App {
         Options options = getOptions();
         try {
             CommandLine commandLine = new BasicParser().parse(options, args);
-            if (commandLine.hasOption('h')) {
+            if (commandLine.hasOption('h') || !commandLine.hasOption("D")) {
                 printHelp(options);
             } else {
                 Map<String, String> replacetokens = new HashMap<>();
-                if (commandLine.hasOption("D")) {
-                    Properties properties = commandLine.getOptionProperties("D");
-                    for (String key : properties.stringPropertyNames()) {
-                        replacetokens.put(key, properties.getProperty(key));
-                    }
+                Properties properties = commandLine.getOptionProperties("D");
+                for (String key : properties.stringPropertyNames()) {
+                    replacetokens.put(key, properties.getProperty(key));
                 }
                 config = new Config(
                         commandLine.getOptionValue('b', "@"),
@@ -60,6 +57,7 @@ public class App {
             }
         } catch (ParseException ex) {
             LOGGER.error("Parsing failed.", ex);
+            System.out.println(ex.getMessage());
             printHelp(options);
         }
         return config;
@@ -67,7 +65,7 @@ public class App {
 
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("java -jar TokenReplacer.jar", options);
+        formatter.printHelp("java -jar tokenreplacer.jar", options);
     }
 
     private static boolean readContinue() {
@@ -82,7 +80,7 @@ public class App {
     public static void main(String[] args) {
         Config config = readConfig(args);
         if (config != null) {
-            System.out.print(config.toString());
+            System.out.println(config.toString());
             if (config.isQuiet() || readContinue()) {
                 new Action(config).run();
                 System.out.println("Done.");

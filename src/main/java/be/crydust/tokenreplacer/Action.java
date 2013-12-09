@@ -2,7 +2,6 @@ package be.crydust.tokenreplacer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ public class Action implements Runnable {
                 if (Files.exists(file)) {
                     Path readonlyFile = FileExtensionUtil.replaceExtension(template, ".readonly");
                     if (Files.exists(readonlyFile)) {
-                        System.out.printf("Skipping readonly file %s (file exists).%n", file);
+                        System.out.printf("Skipped %s (readonly)%n", file);
                         continue;
                     }
                     String fileContents = new FileReader(file).call();
@@ -39,8 +38,10 @@ public class Action implements Runnable {
                 }
                 String templateContents = new FileReader(template).call();
                 new FileWriter(replacer.replace(templateContents), file).run();
+                System.out.printf("Wrote %s%n", file);
             }
         } catch (Exception ex) {
+            System.err.println(ex.getMessage());
             LOGGER.error(null, ex);
         }
     }

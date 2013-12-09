@@ -49,6 +49,7 @@ public class FilesFinder implements Callable<List<Path>> {
                 }
             });
         } catch (IOException ex) {
+            System.err.println(ex.getMessage());
             LOGGER.error(null, ex);
         }
         return files;
