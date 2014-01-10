@@ -1,6 +1,9 @@
 package be.crydust.tokenreplacer;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +29,16 @@ public class App {
         options.addOption("e", "endtoken", true, "endtoken (default @)");
         options.addOption("f", "folder", true, "folder (default current directory)");
         options.addOption("q", "quiet", false, "quiet mode, do not ask if ok to replace");
+        options.addOption("r", "replacetokens", true, "property file containing key value pairs (use -D to override)");
         OptionBuilder.withArgName("key=value");
         OptionBuilder.hasArgs(2);
         OptionBuilder.withValueSeparator('=');
-        OptionBuilder.withDescription("key value pairs to replace (required)");
+        OptionBuilder.withDescription("key value pairs to replace (required unless replacetokens file is defined)");
         options.addOption(OptionBuilder.create("D"));
+        options.getOption("begintoken").setArgName("token");
+        options.getOption("endtoken").setArgName("token");
+        options.getOption("folder").setArgName("folder");
+        options.getOption("replacetokens").setArgName("file");
         return options;
     }
 
@@ -39,25 +47,46 @@ public class App {
         Options options = getOptions();
         try {
             CommandLine commandLine = new BasicParser().parse(options, args);
-            if (commandLine.hasOption('h') || !commandLine.hasOption("D")) {
+            if (commandLine.hasOption("help")
+                    || !(commandLine.hasOption("D") || commandLine.hasOption("replacetokens"))) {
+                System.err.println("Provide at least one -D or -r argument.");
                 printHelp(options);
             } else {
                 Map<String, String> replacetokens = new HashMap<>();
-                Properties properties = commandLine.getOptionProperties("D");
-                for (String key : properties.stringPropertyNames()) {
-                    replacetokens.put(key, properties.getProperty(key));
+                if (commandLine.hasOption("replacetokens")) {
+                    Path replacetokensPath = Paths.get(commandLine.getOptionValue("replacetokens", System.getProperty("user.dir")));
+                    Properties properties = new Properties();
+                    try {
+                        properties.load(new FileInputStream(replacetokensPath.toFile()));
+                        for (String key : properties.stringPropertyNames()) {
+                            replacetokens.put(key, properties.getProperty(key));
+                        }
+                    } catch (IOException ex) {
+                        System.err.printf("File %s could not be read.%n%s%n", replacetokensPath, ex.getMessage());
+                        printHelp(options);
+                    }
+                }
+                if (commandLine.hasOption("D")) {
+                    Properties properties = commandLine.getOptionProperties("D");
+                    for (String key : properties.stringPropertyNames()) {
+                        String value = properties.getProperty(key);
+                        if (replacetokens.containsKey(key)) {
+                            System.out.printf("Overriding %s with value %s.%n", key, value);
+                        }
+                        replacetokens.put(key, value);
+                    }
                 }
                 config = new Config(
-                        commandLine.getOptionValue('b', "@"),
-                        commandLine.getOptionValue('e', "@"),
+                        commandLine.getOptionValue("begintoken", "@"),
+                        commandLine.getOptionValue("endtoken", "@"),
                         replacetokens,
-                        Paths.get(commandLine.getOptionValue('f', System.getProperty("user.dir"))),
-                        commandLine.hasOption("q")
+                        Paths.get(commandLine.getOptionValue("folder", System.getProperty("user.dir"))),
+                        commandLine.hasOption("quiet")
                 );
             }
         } catch (ParseException ex) {
             LOGGER.error("Parsing failed.", ex);
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
             printHelp(options);
         }
         return config;

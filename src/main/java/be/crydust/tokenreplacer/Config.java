@@ -49,7 +49,28 @@ public class Config {
 
     @Override
     public String toString() {
-        return "Config{\n" + "  begintoken=" + begintoken + ",\n" + "  endtoken=" + endtoken + ",\n" + "  replacetokens=" + replacetokens + ",\n" + "  folder=" + folder + ",\n" + "  quiet=" + quiet + "\n" + "}";
+        StringBuilder replacetokensSB = new StringBuilder();
+        replacetokensSB.append("{");
+        for (Map.Entry<String, String> replacetoken : replacetokens.entrySet()) {
+            replacetokensSB
+                    .append("\n    ")
+                    .append(replacetoken.getKey())
+                    .append('=')
+                    .append(replacetoken.getValue())
+                    .append(",");
+        }
+        if (replacetokensSB.length() > 0) {
+            replacetokensSB.setLength(replacetokensSB.length() - 1);
+        }
+        replacetokensSB.append("\n  }");
+        return String.format(""
+                + "Config{\n"
+                + "  begintoken=%s,\n"
+                + "  endtoken=%s,\n"
+                + "  replacetokens=%s,\n"
+                + "  folder=%s,\n"
+                + "  quiet=%s\n"
+                + "}", begintoken, endtoken, replacetokensSB, folder, quiet);
     }
 
 }
