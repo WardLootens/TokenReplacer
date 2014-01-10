@@ -3,7 +3,7 @@
 
     <groupId>be.crydust</groupId>
     <artifactId>tokenreplacer</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3</version>
     <packaging>jar</packaging>
 
     <name>tokenreplacer</name>
@@ -21,7 +21,7 @@
         <url>https://github.com/Crydust/TokenReplacer</url>
         <connection>scm:git:git://github.com/Crydust/TokenReplacer.git</connection>
         <developerConnection>scm:git:git@github.com:Crydust/TokenReplacer.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>tokenreplacer-1.3</tag>
   </scm>
     
     <build>
