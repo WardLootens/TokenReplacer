@@ -18,13 +18,15 @@ public class Config {
     private final Map<String, String> replacetokens;
     private final Path folder;
     private final boolean quiet;
+    private final String[] excludes;
 
-    public Config(String begintoken, String endtoken, Map<String, String> replacetokens, Path folder, boolean quiet) {
+    public Config(String begintoken, String endtoken, Map<String, String> replacetokens, Path folder, boolean quiet, String[] excludes) {
         this.begintoken = begintoken;
         this.endtoken = endtoken;
         this.replacetokens = replacetokens;
         this.folder = folder;
         this.quiet = quiet;
+        this.excludes = excludes;
     }
 
     public String getBegintoken() {
@@ -47,6 +49,10 @@ public class Config {
         return quiet;
     }
 
+    public String[] getExcludes() {
+        return excludes;
+    }
+
     @Override
     public String toString() {
         StringBuilder replacetokensSB = new StringBuilder();
@@ -59,10 +65,21 @@ public class Config {
                     .append(replacetoken.getValue())
                     .append(",");
         }
-        if (replacetokensSB.length() > 0) {
+        if (replacetokensSB.length() > 1) {
             replacetokensSB.setLength(replacetokensSB.length() - 1);
         }
         replacetokensSB.append("\n  }");
+
+        StringBuilder excludesSB = new StringBuilder();
+        excludesSB.append("[");
+        for (String exclude : excludes) {
+            excludesSB.append(exclude.replace(",", "\\,")).append(",");
+        }
+        if (excludesSB.length() > 1) {
+            excludesSB.setLength(excludesSB.length() - 1);
+        }
+        excludesSB.append("]");
+
         return String.format(""
                 + "Config{\n"
                 + "  begintoken=%s,\n"
@@ -70,7 +87,8 @@ public class Config {
                 + "  replacetokens=%s,\n"
                 + "  folder=%s,\n"
                 + "  quiet=%s\n"
-                + "}", begintoken, endtoken, replacetokensSB, folder, quiet);
+                + "  excludes=%s\n"
+                + "}", begintoken, endtoken, replacetokensSB, folder, quiet, excludesSB);
     }
 
 }

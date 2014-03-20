@@ -23,10 +23,14 @@ public class Action implements Runnable {
     public void run() {
         try {
             TokenReplacer replacer = new TokenReplacer(config.getBegintoken(), config.getEndtoken(), config.getReplacetokens());
-            List<Path> templates = new FilesFinder(config.getFolder(), "*.template").call();
+            List<Path> templates = new FilesFinder(config.getFolder(), "**/*.template", config.getExcludes()).call();
             for (Path template : templates) {
                 Path file = FileExtensionUtil.replaceExtension(template, "");
                 if (Files.exists(file)) {
+                    if (Files.isDirectory(file)) {
+                        System.out.printf("Skipped %s (there is a directory with the same name)%n", file);
+                        continue;
+                    }
                     Path readonlyFile = FileExtensionUtil.replaceExtension(template, ".readonly");
                     if (Files.exists(readonlyFile)) {
                         System.out.printf("Skipped %s (readonly)%n", file);
