@@ -6,7 +6,10 @@ import java.util.Objects;
  *
  * @author kristof
  */
-public class Strings {
+public final class Strings {
+
+    private Strings() {
+    }
 
     public static String requireNonEmpty(String string) {
         Objects.requireNonNull(string);

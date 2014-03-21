@@ -18,10 +18,13 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class App {
+public final class App {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
+    private App(){
+    }
+    
     private static Options getOptions() {
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
@@ -30,6 +33,7 @@ public class App {
         options.addOption("f", "folder", true, "folder (default current directory)");
         options.addOption("q", "quiet", false, "quiet mode, do not ask if ok to replace");
         options.addOption("r", "replacetokens", true, "property file containing key value pairs (use -D to override)");
+        options.addOption("x", "exclude", true, "glob pattern to exclude");
         OptionBuilder.withArgName("key=value");
         OptionBuilder.hasArgs(2);
         OptionBuilder.withValueSeparator('=');
@@ -39,10 +43,11 @@ public class App {
         options.getOption("endtoken").setArgName("token");
         options.getOption("folder").setArgName("folder");
         options.getOption("replacetokens").setArgName("file");
+        options.getOption("exclude").setArgName("glob");
         return options;
     }
 
-    private static Config readConfig(String[] args) {
+    public static Config readConfig(String[] args) {
         Config config = null;
         Options options = getOptions();
         try {
@@ -76,12 +81,17 @@ public class App {
                         replacetokens.put(key, value);
                     }
                 }
+                String[] excludes = new String[0];
+                if (commandLine.hasOption("exclude")) {
+                    excludes = commandLine.getOptionValues("exclude");
+                }
                 config = new Config(
                         commandLine.getOptionValue("begintoken", "@"),
                         commandLine.getOptionValue("endtoken", "@"),
                         replacetokens,
                         Paths.get(commandLine.getOptionValue("folder", System.getProperty("user.dir"))),
-                        commandLine.hasOption("quiet")
+                        commandLine.hasOption("quiet"),
+                        excludes
                 );
             }
         } catch (ParseException ex) {
