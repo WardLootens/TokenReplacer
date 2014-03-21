@@ -7,8 +7,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -18,6 +21,13 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provides an entrypoint to our application.
+ * Turns the arguments from the command line into a Config
+ * and delegates further work to the Action class.
+ * 
+ * @author kristof
+ */
 public final class App {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
@@ -47,7 +57,15 @@ public final class App {
         return options;
     }
 
-    public static Config readConfig(String[] args) {
+    /**
+     * Turns the arguments from the command line into a Config.
+     * 
+     * @param args the command line arguments to parse
+     * @return a valid configuration or null
+     */
+    @CheckForNull
+    public static Config readConfig(@Nonnull String[] args) {
+        Objects.requireNonNull(args);
         Config config = null;
         Options options = getOptions();
         try {
@@ -116,6 +134,9 @@ public final class App {
         }
     }
 
+    /**
+     * @param args
+     */
     public static void main(String[] args) {
         Config config = readConfig(args);
         if (config != null) {

@@ -2,11 +2,15 @@ package be.crydust.tokenreplacer;
 
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * The application configuration.
+ * A dumb value object.
+ * 
  * @author kristof
  */
 public class Config {
@@ -20,7 +24,20 @@ public class Config {
     private final boolean quiet;
     private final String[] excludes;
 
-    public Config(String begintoken, String endtoken, Map<String, String> replacetokens, Path folder, boolean quiet, String[] excludes) {
+    /**
+     * @param begintoken string that precedes the key to replace
+     * @param endtoken string that follows the key to replace
+     * @param replacetokens key-value pairs to replace
+     * @param folder base directory to start replacing
+     * @param quiet true if no confirmation should be asked
+     * @param excludes patterns to exclude from replacement
+     */
+    public Config(@Nonnull String begintoken, @Nonnull String endtoken, @Nonnull Map<String, String> replacetokens, @Nonnull Path folder, boolean quiet, @Nonnull String[] excludes) {
+        Strings.requireNonEmpty(begintoken);
+        Strings.requireNonEmpty(endtoken);
+        Objects.requireNonNull(replacetokens);
+        Objects.requireNonNull(folder);
+        Objects.requireNonNull(excludes);
         this.begintoken = begintoken;
         this.endtoken = endtoken;
         this.replacetokens = replacetokens;
