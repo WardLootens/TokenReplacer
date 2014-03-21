@@ -51,6 +51,8 @@ public class Action implements Runnable {
                     Path backupFile = FileExtensionUtil.replaceExtension(template, ".bak");
                     Files.move(file, backupFile,
                             StandardCopyOption.ATOMIC_MOVE,
+                            // TODO KN should we add this? needs a test
+                            // StandardCopyOption.COPY_ATTRIBUTES,
                             StandardCopyOption.REPLACE_EXISTING);
                 }
                 String templateContents = new FileReader(template).call();
