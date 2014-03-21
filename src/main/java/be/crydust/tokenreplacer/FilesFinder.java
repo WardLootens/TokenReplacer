@@ -49,7 +49,7 @@ public class FilesFinder implements Callable<List<Path>> {
         this.includesMatcher = FileSystems.getDefault()
                 .getPathMatcher(patternsToGlob(includes));
         if (excludes.length == 0) {
-            excludesMatcher = ALL_FALSE;
+            this.excludesMatcher = ALL_FALSE;
         } else {
             this.excludesMatcher = FileSystems.getDefault()
                     .getPathMatcher(patternsToGlob(excludes));
@@ -83,7 +83,7 @@ public class FilesFinder implements Callable<List<Path>> {
         return pattern.replaceAll("([\\[\\]!\\{\\}])", "\\\\$1");
     }
 
-    public static String patternsToGlob(String[] patterns) {
+    private static String patternsToGlob(String[] patterns) {
         StringBuilder sb = new StringBuilder();
         int partCount = 0;
         for (String pattern : patterns) {

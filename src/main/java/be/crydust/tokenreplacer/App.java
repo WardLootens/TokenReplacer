@@ -18,10 +18,13 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class App {
+public final class App {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
+    private App(){
+    }
+    
     private static Options getOptions() {
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
