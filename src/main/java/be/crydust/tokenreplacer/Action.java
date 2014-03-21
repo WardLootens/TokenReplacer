@@ -2,6 +2,7 @@ package be.crydust.tokenreplacer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +37,10 @@ public class Action implements Runnable {
                         System.out.printf("Skipped %s (readonly)%n", file);
                         continue;
                     }
-                    String fileContents = new FileReader(file).call();
                     Path backupFile = FileExtensionUtil.replaceExtension(template, ".bak");
-                    new FileWriter(fileContents, backupFile).run();
+                    Files.move(file, backupFile,
+                            StandardCopyOption.ATOMIC_MOVE,
+                            StandardCopyOption.REPLACE_EXISTING);
                 }
                 String templateContents = new FileReader(template).call();
                 new FileWriter(replacer.replace(templateContents), file).run();
