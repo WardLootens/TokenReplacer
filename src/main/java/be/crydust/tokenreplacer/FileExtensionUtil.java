@@ -15,7 +15,6 @@ public final class FileExtensionUtil {
     public static Path replaceExtension(Path path, String newExtension) {
         Objects.requireNonNull(path);
         Objects.requireNonNull(newExtension);
-        Path folder = path.getParent();
         String originalFileName = path.getFileName().toString();
         if (!originalFileName.contains(".")) {
             throw new IllegalArgumentException("path has no extension");
@@ -27,6 +26,6 @@ public final class FileExtensionUtil {
             dot = ".";
         }
         String newFileName = originalFileName.replaceFirst("\\.\\w+$", dot + newExtension);
-        return folder.resolve(newFileName);
+        return path.resolveSibling(newFileName);
     }
 }
