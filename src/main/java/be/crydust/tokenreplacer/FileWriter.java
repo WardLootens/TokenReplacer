@@ -24,10 +24,23 @@ public class FileWriter implements Runnable {
     private final Path path;
     private final Charset encoding;
 
+    /**
+     * FileWriter with default encoding (UTF_8)
+     *
+     * @param contents
+     * @param path
+     */
     public FileWriter(String contents, Path path) {
         this(contents, path, DEFAULT_ENCODING);
     }
 
+    /**
+     * FileWriter with custom encoding
+     *
+     * @param contents
+     * @param path
+     * @param encoding
+     */
     public FileWriter(String contents, Path path, Charset encoding) {
         Objects.requireNonNull(contents);
         Objects.requireNonNull(path);

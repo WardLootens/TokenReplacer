@@ -34,10 +34,24 @@ public class FilesFinder implements Callable<List<Path>> {
         }
     };
 
+    /**
+     * FilesFinder with only one include pattern
+     *
+     * @param path
+     * @param include
+     * @param excludes
+     */
     public FilesFinder(Path path, String include, String[] excludes) {
         this(path, new String[]{include}, excludes);
     }
 
+    /**
+     * FilesFinder with only one multiple include patterns
+     *
+     * @param path
+     * @param includes
+     * @param excludes
+     */
     public FilesFinder(Path path, String[] includes, String[] excludes) {
         Objects.requireNonNull(path);
         Objects.requireNonNull(includes);

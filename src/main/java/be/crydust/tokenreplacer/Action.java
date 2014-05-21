@@ -2,11 +2,18 @@ package be.crydust.tokenreplacer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The business logic of the application. Will search for *.template files. Then
+ * will create the resulting file by replacing the tokens within. Existing files
+ * are replaced except if a *.readonly file is found. The replaced file is
+ * renamed to *.bak.
  *
  * @author kristof
  */
@@ -15,7 +22,11 @@ public class Action implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Action.class);
     private final Config config;
 
-    public Action(Config config) {
+    /**
+     * @param config a valid configuration
+     */
+    public Action(@Nonnull Config config) {
+        Objects.requireNonNull(config);
         this.config = config;
     }
 
@@ -36,9 +47,12 @@ public class Action implements Runnable {
                         System.out.printf("Skipped %s (readonly)%n", file);
                         continue;
                     }
-                    String fileContents = new FileReader(file).call();
                     Path backupFile = FileExtensionUtil.replaceExtension(template, ".bak");
-                    new FileWriter(fileContents, backupFile).run();
+                    Files.move(file, backupFile,
+                            StandardCopyOption.ATOMIC_MOVE,
+                            // TODO KN should we add this? needs a test
+                            // StandardCopyOption.COPY_ATTRIBUTES,
+                            StandardCopyOption.REPLACE_EXISTING);
                 }
                 String templateContents = new FileReader(template).call();
                 new FileWriter(replacer.replace(templateContents), file).run();
