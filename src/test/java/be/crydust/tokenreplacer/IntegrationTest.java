@@ -64,7 +64,7 @@ public class IntegrationTest {
         
         new FileWriter(input, aTemplate.toPath()).run();
         TokenReplacer replacer = new TokenReplacer(begintoken, endtoken, replacetokens);
-        List<Path> templates = new FilesFinder(folder.getRoot().toPath(), "*.template").call();
+        List<Path> templates = new FilesFinder(folder.getRoot().toPath(), "**/*.template", new String[0]).call();
         for(Path template : templates){
             Path file = FileExtensionUtil.replaceExtension(template, "");
             if (Files.exists(file)) {

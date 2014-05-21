@@ -18,6 +18,12 @@ public class TokenReplacer {
 
     private Pattern pattern;
 
+    /**
+     *
+     * @param begintoken
+     * @param endtoken
+     * @param replacetokens
+     */
     public TokenReplacer(String begintoken, String endtoken, Map<String, String> replacetokens) {
         Strings.requireNonEmpty(begintoken);
         Strings.requireNonEmpty(endtoken);
@@ -50,6 +56,12 @@ public class TokenReplacer {
         return pattern;
     }
 
+    /**
+     * replaces all occurrences of "begintoken key endtoken" by "value"
+     *
+     * @param input
+     * @return
+     */
     public String replace(String input) {
         Matcher matcher = getPattern().matcher(input);
         StringBuffer stringBuffer = new StringBuffer();

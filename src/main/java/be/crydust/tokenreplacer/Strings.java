@@ -6,14 +6,23 @@ import java.util.Objects;
  *
  * @author kristof
  */
-public class Strings {
+public final class Strings {
 
-    public static String requireNonEmpty(String string) {
+    private Strings() {
+    }
+
+    /**
+     * A similar method to Objects.requireNonNull.
+     *
+     * @param string
+     * @throws NullPointerException
+     * @throws IllegalArgumentException
+     */
+    public static void requireNonEmpty(String string) {
         Objects.requireNonNull(string);
         if (string.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        return string;
     }
 
 }

@@ -24,14 +24,50 @@ public class FilesFinder implements Callable<List<Path>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FilesFinder.class);
 
     private final Path path;
-    private final PathMatcher matcher;
+    private final PathMatcher includesMatcher;
+    private final PathMatcher excludesMatcher;
 
-    public FilesFinder(Path path, String expression) {
+    private static final PathMatcher ALL_FALSE = new PathMatcher() {
+        @Override
+        public boolean matches(Path path) {
+            return false;
+        }
+    };
+
+    /**
+     * FilesFinder with only one include pattern
+     *
+     * @param path
+     * @param include
+     * @param excludes
+     */
+    public FilesFinder(Path path, String include, String[] excludes) {
+        this(path, new String[]{include}, excludes);
+    }
+
+    /**
+     * FilesFinder with only one multiple include patterns
+     *
+     * @param path
+     * @param includes
+     * @param excludes
+     */
+    public FilesFinder(Path path, String[] includes, String[] excludes) {
         Objects.requireNonNull(path);
-        Strings.requireNonEmpty(expression);
+        Objects.requireNonNull(includes);
+        Objects.requireNonNull(excludes);
+        if (includes.length == 0) {
+            throw new IllegalArgumentException("includes should not be empty");
+        }
         this.path = path;
-        this.matcher = FileSystems.getDefault()
-                .getPathMatcher("glob:" + expression);
+        this.includesMatcher = FileSystems.getDefault()
+                .getPathMatcher(patternsToGlob(includes));
+        if (excludes.length == 0) {
+            this.excludesMatcher = ALL_FALSE;
+        } else {
+            this.excludesMatcher = FileSystems.getDefault()
+                    .getPathMatcher(patternsToGlob(excludes));
+        }
     }
 
     @Override
@@ -41,8 +77,10 @@ public class FilesFinder implements Callable<List<Path>> {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path name = file.getFileName();
-                    if (name != null && matcher.matches(name)) {
+                    Path relativePath = path.relativize(file);
+                    if (relativePath != null
+                            && includesMatcher.matches(relativePath)
+                            && !excludesMatcher.matches(relativePath)) {
                         files.add(file);
                     }
                     return FileVisitResult.CONTINUE;
@@ -53,6 +91,32 @@ public class FilesFinder implements Callable<List<Path>> {
             LOGGER.error(null, ex);
         }
         return files;
+    }
+
+    private static String escapeGlob(String pattern) {
+        return pattern.replaceAll("([\\[\\]!\\{\\}])", "\\\\$1");
+    }
+
+    private static String patternsToGlob(String[] patterns) {
+        StringBuilder sb = new StringBuilder();
+        int partCount = 0;
+        for (String pattern : patterns) {
+            Strings.requireNonEmpty(pattern);
+            if (pattern.startsWith("**/")) {
+                String extraPattern = pattern.substring(3);
+                Strings.requireNonEmpty(extraPattern);
+                partCount++;
+                sb.append(escapeGlob(extraPattern)).append(',');
+            }
+            partCount++;
+            sb.append(escapeGlob(pattern)).append(',');
+        }
+        sb.setLength(sb.length() - 1);
+        if (partCount > 1) {
+            sb.insert(0, '{').append('}');
+        }
+        sb.insert(0, "glob:");
+        return sb.toString();
     }
 
 }
