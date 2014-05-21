@@ -10,12 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The business logic of the application.
- * Will search for *.template files.
- * Then will create the resulting file by replacing the tokens within.
- * Existing files are replaced except if a *.readonly file is found.
- * The replaced file is renamed to *.bak.
- * 
+ * The business logic of the application. Will search for *.template files. Then
+ * will create the resulting file by replacing the tokens within. Existing files
+ * are replaced except if a *.readonly file is found. The replaced file is
+ * renamed to *.bak.
+ *
  * @author kristof
  */
 public class Action implements Runnable {

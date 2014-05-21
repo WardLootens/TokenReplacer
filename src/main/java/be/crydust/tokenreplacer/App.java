@@ -22,19 +22,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides an entrypoint to our application.
- * Turns the arguments from the command line into a Config
- * and delegates further work to the Action class.
- * 
+ * Provides an entrypoint to our application. Turns the arguments from the
+ * command line into a Config and delegates further work to the Action class.
+ *
  * @author kristof
  */
 public final class App {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
-    private App(){
+    private App() {
     }
-    
+
     private static Options getOptions() {
         Options options = new Options();
         options.addOption("h", "help", false, "print this message");
@@ -59,7 +58,7 @@ public final class App {
 
     /**
      * Turns the arguments from the command line into a Config.
-     * 
+     *
      * @param args the command line arguments to parse
      * @return a valid configuration or null
      */

@@ -8,9 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The application configuration.
- * A dumb value object.
- * 
+ * The application configuration. A dumb value object.
+ *
  * @author kristof
  */
 public class Config {
@@ -46,26 +45,44 @@ public class Config {
         this.excludes = excludes;
     }
 
+    /**
+     * @return string that precedes the key to replace
+     */
     public String getBegintoken() {
         return begintoken;
     }
 
+    /**
+     * @return string that follows the key to replace
+     */
     public String getEndtoken() {
         return endtoken;
     }
 
+    /**
+     * @return key-value pairs to replace
+     */
     public Map<String, String> getReplacetokens() {
         return replacetokens;
     }
 
+    /**
+     * @return base directory to start replacing
+     */
     public Path getFolder() {
         return folder;
     }
 
+    /**
+     * @return true if no confirmation should be asked
+     */
     public boolean isQuiet() {
         return quiet;
     }
 
+    /**
+     * @return patterns to exclude from replacement
+     */
     public String[] getExcludes() {
         return excludes;
     }

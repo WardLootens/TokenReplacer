@@ -4,11 +4,9 @@ import java.nio.file.Path;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 
-
 /**
- * This class consists of {@code static} utility methods for operating
- * on paths. These utilities include a method for replacing the extension
- * of a file.
+ * This class consists of {@code static} utility methods for operating on paths.
+ * These utilities include a method for replacing the extension of a file.
  *
  * @author kristof
  */
@@ -19,17 +17,19 @@ public final class FileExtensionUtil {
 
     /**
      * Replaces or removes the extension from a filename.
-     * 
-     * <p> <b>Usage Examples:</b>
+     *
+     * <p>
+     * <b>Usage Examples:</b>
      * Suppose we want to replace a file extension from "txt" to "csv":
      * <pre>
      *     Path source = Paths.get("c:/temp/numbers.txt");
      *     Path destination = FileExtensionUtil.replaceExtension(source, "csv");
      *     // returns c:/temp/numbers.csv
      * </pre>
-     * 
+     *
      * @param path original path of the file
-     * @param newExtension extension for the resulting file. Use an empty string to simply remove the extension. Prepending a dot is not necessary.
+     * @param newExtension extension for the resulting file. Use an empty string
+     * to simply remove the extension. Prepending a dot is not necessary.
      * @return path with its filename extension replaced by newExtension
      */
     @Nonnull
