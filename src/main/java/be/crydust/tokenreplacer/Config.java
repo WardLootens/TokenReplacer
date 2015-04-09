@@ -120,7 +120,7 @@ public class Config {
                 + "  endtoken=%s,\n"
                 + "  replacetokens=%s,\n"
                 + "  folder=%s,\n"
-                + "  quiet=%s\n"
+                + "  quiet=%s,\n"
                 + "  excludes=%s\n"
                 + "}", begintoken, endtoken, replacetokensSB, folder, quiet, excludesSB);
     }

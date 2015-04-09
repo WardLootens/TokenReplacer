@@ -70,9 +70,9 @@ public class ActionTest {
     @Test
     public void testExclude() throws Exception {
         folder.newFolder("a");
-        folder.newFolder("a/tmp");
+        folder.newFolder("a", "tmp");
         folder.newFolder("tmp");
-        folder.newFolder("tmp/a");
+        folder.newFolder("tmp", "a");
         File file1 = folder.newFile("1");
         File template1 = folder.newFile("1.template");
         File file2 = folder.newFile("tmp/2");
