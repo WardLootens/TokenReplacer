@@ -3,7 +3,7 @@
 
     <groupId>be.crydust</groupId>
     <artifactId>tokenreplacer</artifactId>
-    <version>1.4</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
 
     <name>tokenreplacer</name>
@@ -22,10 +22,60 @@
         <connection>scm:git:git://github.com/Crydust/TokenReplacer.git</connection>
         <developerConnection>scm:git:git@github.com:Crydust/TokenReplacer.git</developerConnection>
       <tag>HEAD</tag>
-  </scm>
-    
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>srv-ci-releases</id>
+            <name>Releases</name>
+            <url>http://nexus.mips.be:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>srv-ci-snapshots</id>
+            <name>Snapshots</name>
+            <url>http://nexus.mips.be:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <site>
+            <id>dummy</id>
+            <url>dummy://dummy</url>
+        </site>
+    </distributionManagement>
+
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>1.1</version>
+                    <executions>
+                        <execution>
+                            <id>jdk-1.7</id>
+                            <configuration>
+                                <toolchains>
+                                    <jdk>
+                                        <version>1.7</version>
+                                    </jdk>
+                                </toolchains>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jdk-1.7</id>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -154,18 +204,18 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.6</version>
+            <version>1.7.25</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.1</version>
+            <version>1.2.3</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.1.1</version>
+            <version>1.2.3</version>
             <optional>true</optional>
         </dependency>
         <dependency>
